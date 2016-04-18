@@ -167,18 +167,18 @@ void rotationTriangle3d(t_triangle3d *t, t_point3d *centre, float degreX, float 
 			{0, 0, 1, 0},\
 			{0, 0, 0, 1}};
 	
-	t_point3d *vx;
+	t_point3d *vx = definirVecteur3d(0,0,0);;
 	multiplicationVecteur3d(vx, matrice_rotx, t->abc[0]);
 
-	t_point3d *vy ;
+	t_point3d *vy = definirVecteur3d(0,0,0); ;
 	multiplicationVecteur3d(vy, matrice_roty, t->abc[1]);
 
-	t_point3d *vz;
+	t_point3d *vz = definirVecteur3d(0,0,0);
 	multiplicationVecteur3d(vz, matrice_rotz, t->abc[2]);
 	
-	//t = definirTriangle3d(vx, vy, vz);
+	t = definirTriangle3d(vx, vy, vz);
 
-	//translationTriangle3d(t,invcentre);
+	translationTriangle3d(t,invcentre);
 }
 
 void transformationTriangle3d(t_triangle3d *t, double mat[4][4])
