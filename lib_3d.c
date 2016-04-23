@@ -87,9 +87,9 @@ t_point2d *__conversion_2d_3d(t_point3d *p3d)
 	t_point2d *p2d;
 	t_point3d *p3dtmp;
 	double matrice_projection[4][4]={{1, 0, 0, 0},\
-			{0, 1, 0, 0},\
-			{0, 0, 1, 0},\
-			{0, 0, 0, 1}};
+					 {0, 1, 0, 0},\
+					 {0, 0, 1, 0},\
+					 {0, 0, 0, 1}};
 
 
 	p2d = NULL;
@@ -124,26 +124,51 @@ void remplirTriangle3d(t_surface * surface, t_triangle3d * triangle, Uint32 c)
 
 }
 
+t_point3d * copier_point3d(t_point3d *p)
+{
+	t_point3d *cp = (t_point3d*) malloc(sizeof(t_point3d));
+		cp->xyzt[0] = p->xyzt[0];
+		cp->xyzt[1] = p->xyzt[1];
+		cp->xyzt[2] = p->xyzt[2];
+		cp->xyzt[3] = p->xyzt[3];
+	return cp;
+}
+
+void proc_copier_point3d(t_point3d * p1, t_point3d * p2)
+{
+		p1->xyzt[0] = p2->xyzt[0];
+		p1->xyzt[1] = p2->xyzt[1];
+		p1->xyzt[2] = p2->xyzt[2];
+		p1->xyzt[3] = p2->xyzt[3];
+}
+
+void transformationTriangle3d(t_triangle3d *t, double mat[4][4])
+{
+int i;
+	
+	for (i=0; i<3; i++)
+	{
+		t_point3d *point_temp = copier_point3d(t->abc[i]);
+		multiplicationVecteur3d(point_temp, mat, t->abc[i]);
+		proc_copier_point3d(t->abc[i], point_temp);
+		free(point_temp);
+	}
+
+}
+
+
 void translationTriangle3d(t_triangle3d *t, t_point3d *vecteur)
 {	
-	t_point3d *v1 = definirVecteur3d(0,0,0);
-	t_point3d *v2 = definirVecteur3d(0,0,0);
-	t_point3d *v3 = definirVecteur3d(0,0,0);
-	
-
 	
 	double matrice_translation[4][4]={{1, 0, 0, vecteur->xyzt[0]},\
-			{0, 1, 0, vecteur->xyzt[1]},\
-			{0, 0, 1, vecteur->xyzt[2]},\
-			{0, 0, 0, 1}};
+					  {0, 1, 0, vecteur->xyzt[1]},\
+					  {0, 0, 1, vecteur->xyzt[2]},\
+					  {0, 0, 0, 1}};
 	
-	multiplicationVecteur3d(v1, matrice_translation, t->abc[0]);
-	multiplicationVecteur3d(v2, matrice_translation, t->abc[1]);
-	multiplicationVecteur3d(v3, matrice_translation, t->abc[2]);
-	
-	
-	t = definirTriangle3d(v1, v2, v3);
+	transformationTriangle3d(t, matrice_translation);
 }
+
+
 
 void rotationTriangle3d(t_triangle3d *t, t_point3d *centre, float degreX, float degreY, float degreZ)
 {
@@ -153,37 +178,37 @@ void rotationTriangle3d(t_triangle3d *t, t_point3d *centre, float degreX, float 
 	translationTriangle3d(t,centre);
 	
 	double matrice_rotx[4][4]={{1, 0, 0, 0},\
-			{0, cos(M_PI*degreX/180), -sin(M_PI*degreX/180),0,},\
-			{0, sin(M_PI*degreX/180), cos(M_PI*degreX/180), 0},\
-			{0, 0, 0, 1}};
+				   {0, cos(M_PI*degreX/180), -sin(M_PI*degreX/180),0,},\
+				   {0, sin(M_PI*degreX/180), cos(M_PI*degreX/180), 0},\
+				   {0, 0, 0, 1}};
 	
 	double matrice_roty[4][4]={{cos(M_PI*degreY/180), 0, sin(M_PI*degreY/180), 0},\
-			{0, 1, 0, 0,},\
-			{-sin(M_PI*degreY/180), 0, cos(M_PI*degreY/180), 0},\
-			{0, 0, 0, 1}};	
+				   {0, 1, 0, 0,},\
+				   {-sin(M_PI*degreY/180), 0, cos(M_PI*degreY/180), 0},\
+				   {0, 0, 0, 1}};	
 	
 	double matrice_rotz[4][4]={{ cos(M_PI*degreZ/180), -sin(M_PI*degreZ/180), 0, 0},\
 			{sin(M_PI*degreZ/180), cos(M_PI*degreZ/180), 0, 0},\
 			{0, 0, 1, 0},\
 			{0, 0, 0, 1}};
 	
-	t_point3d *vx = definirVecteur3d(0,0,0);;
-	multiplicationVecteur3d(vx, matrice_rotx, t->abc[0]);
-
-	t_point3d *vy = definirVecteur3d(0,0,0); ;
-	multiplicationVecteur3d(vy, matrice_roty, t->abc[1]);
-
-	t_point3d *vz = definirVecteur3d(0,0,0);
-	multiplicationVecteur3d(vz, matrice_rotz, t->abc[2]);
+	t_point3d * point_temp = copier_point3d(t -> abc[0]);
+	multiplicationVecteur3d(point_temp, matrice_rotx, t->abc[0]);
+	proc_copier_point3d(t-> abc[0],point_temp);
+	free(point_temp);	
 	
-	t = definirTriangle3d(vx, vy, vz);
-
+	t_point3d * point_temp1 = copier_point3d(t -> abc[1]);
+	multiplicationVecteur3d(point_temp1, matrice_roty, t->abc[1]);
+	proc_copier_point3d(t-> abc[1],point_temp1);
+	free(point_temp1);
+	
+	t_point3d * point_temp2 = copier_point3d(t -> abc[2]);
+	multiplicationVecteur3d(point_temp2, matrice_rotz, t->abc[2]);
+	proc_copier_point3d(t-> abc[2],point_temp2);
+	
+	free(point_temp2);
+		
 	translationTriangle3d(t,invcentre);
 }
 
-void transformationTriangle3d(t_triangle3d *t, double mat[4][4])
-{
-	// TODO
-
-}
 

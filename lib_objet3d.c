@@ -10,7 +10,10 @@
 t_maillon* __cree_maillon(t_triangle3d *face, Uint32 couleur)
 {
 	t_maillon* pt_maillon = NULL;
-	// TODO
+	t_maillon pt_maillon = (t_maillon*) malloc(sizeof(t_maillon));
+	
+	pt_maillon->face=face;
+	pt_maillon->couleur=couleur;
 
 	return pt_maillon;
 }
@@ -18,21 +21,26 @@ t_maillon* __cree_maillon(t_triangle3d *face, Uint32 couleur)
 // insere en tete le maillon, cf cours algo
 void __insere_tete(t_objet3d *pt_objet, t_maillon *pt_maillon)
 {
-	// TODO
-
+	t_objet3d->tete=pt_maillon;
 }
 
 t_objet3d *objet_vide()
 {
 	t_objet3d *pt_objet = NULL;
-	// TODO
-
+	t_objet3d pt_objet= (t_objet3d*) malloc(sizeof(t_objet3d));
+	
+	pt_objet->tete =__cree_maillon(NULL, NULL);
+	pt_objet->est_camera=0;
+	pt_objet->est_trie=0;
 	return pt_objet;
 }
 
 t_objet3d *camera()
 {
-	// TODO
+	t_objet3d *pt_objet = NULL;
+	pt_objet = objet_vide();
+	
+	pt_objet->est_camera=true;
 
 	return objet_vide();
 }
